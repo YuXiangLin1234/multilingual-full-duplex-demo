@@ -92,8 +92,8 @@ tr.delta td.hl { background: var(--hl-soft); }
 a { color: var(--accent); }
 a.cite { text-decoration: none; }
 .refs ol { margin: 0; padding: 0; list-style: none; counter-reset: ref; display: grid; gap: 10px; }
-.refs li { counter-increment: ref; display: grid; grid-template-columns: 2.5em 1fr; overflow-wrap: anywhere; }
-.refs li::before { content: "[" counter(ref) "]"; color: var(--muted); }
+.refs li { counter-increment: ref; position: relative; padding-left: 2.5em; overflow-wrap: anywhere; }
+.refs li::before { content: "[" counter(ref) "]"; color: var(--muted); position: absolute; left: 0; }
 [hidden] { display: none !important; }
 mark { background: var(--bad-soft); color: var(--bad); padding: 0 1px; border-radius: 2px; }
 </style>
