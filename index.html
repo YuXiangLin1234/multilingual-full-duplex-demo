@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CCFQA Spoken QA</title>
+<title>NTU Proposal 2026: Multilingual Full-Duplex Spoken Language Models</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 /* Qwen3-Omni vs. Qwen3-Omni-D2 table, then 5 sample questions per language with both models side by side */
 :root {
   --bg: #f4f6f8; --surface: #ffffff; --fg: #17212b; --muted: #4f5c69; --line: #d5dce3;
-  --accent: #2f5f8a; --accent-soft: #e3edf6;
+  --accent: #2f5f8a; --accent-soft: #e3edf6; --hl: #b7791f; --hl-soft: #fdf3dc;
   --m-d2: #2f5f8a; --m-qwen: #7a4a9a; --m-raon-chat: #1f6f6b; --m-raon: #8a5a1f;
   --ok: #1f7a4d; --ok-soft: #e1f3e9; --bad: #b3362f; --bad-soft: #fbe6e4; --pend: #8a5800; --pend-soft: #fbf0d9;
   --sans: "IBM Plex Sans", "PingFang TC", "Noto Sans TC", "Noto Sans CJK TC", "Noto Sans KR", "Hiragino Sans", system-ui, sans-serif;
@@ -18,12 +18,12 @@
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #11171d; --surface: #182129; --fg: #e3e9ef; --muted: #a6b2be; --line: #2e3a46;
-  --accent: #8ab8e0; --accent-soft: #1f3245;
+  --accent: #8ab8e0; --accent-soft: #1f3245; --hl: #e8b65c; --hl-soft: #33270f;
   --m-d2: #8ab8e0; --m-qwen: #c9a2e6; --m-raon-chat: #7fd0c8; --m-raon: #e3b878;
   --ok: #6fcf9b; --ok-soft: #173326; --bad: #f08a80; --bad-soft: #3a1d1b; --pend: #e8b65c; --pend-soft: #33270f; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #11171d; --surface: #182129; --fg: #e3e9ef; --muted: #a6b2be; --line: #2e3a46;
-  --accent: #8ab8e0; --accent-soft: #1f3245;
+  --accent: #8ab8e0; --accent-soft: #1f3245; --hl: #e8b65c; --hl-soft: #33270f;
   --m-d2: #8ab8e0; --m-qwen: #c9a2e6; --m-raon-chat: #7fd0c8; --m-raon: #e3b878;
   --ok: #6fcf9b; --ok-soft: #173326; --bad: #f08a80; --bad-soft: #3a1d1b; --pend: #e8b65c; --pend-soft: #33270f; color-scheme: dark }
 body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 17px; line-height: 1.6; }
@@ -85,6 +85,10 @@ audio { width: 100%; max-width: 320px; height: 38px; }
 .tr { color: var(--muted); overflow-wrap: anywhere; }
 .ref .tr { flex-basis: 100%; }
 tr.delta td { font-weight: 600; background: var(--accent-soft); }
+.hl { background: var(--hl-soft); border-left: 2px solid var(--hl); border-right: 2px solid var(--hl); }
+thead th.hl { border-top: 2px solid var(--hl); color: var(--hl); }
+tbody tr:last-child td.hl { border-bottom: 2px solid var(--hl); }
+tr.delta td.hl { background: var(--hl-soft); }
 [hidden] { display: none !important; }
 mark { background: var(--bad-soft); color: var(--bad); padding: 0 1px; border-radius: 2px; }
 </style>
@@ -92,16 +96,15 @@ mark { background: var(--bad-soft); color: var(--bad); padding: 0 1px; border-ra
 <body>
 <div class="wrap">
   <header style="display:grid;gap:12px">
-    <h1>Spoken Question Answering on CCFQA</h1>
+    <h1>NTU Proposal 2026: Multilingual Full-Duplex Spoken Language Models</h1>
     <div class="lede">
-      <p>We use 100 CCFQA questions, asked in English, Chinese, Korean, Japanese and French.</p>
-      <p>Each speech answer is transcribed with Qwen3-ASR-1.7B.</p>
-      <p>The judge is Claude Opus 5.5.</p>
+      <p>We evaluate Qwen3-Omni and Qwen3-Omni-D2, which operate in turn-based and full-duplex modes, respectively. Qwen3-Omni-D2 is Qwen3-Omni fine-tuned into a full-duplex model on English-only data, so comparing the two shows how much multilingual ability is lost when a turn-based model is turned into a full-duplex one with English-only fine-tuning.</p>
+      <p>We use 100 CCFQA questions, asked in English, Chinese, Korean, Japanese and French. Each speech answer is transcribed with Qwen3-ASR-1.7B. The judge is Claude Opus 5.5.</p>
     </div>
   </header>
 
   <section class="panel">
-    <h2>How the metrics work</h2>
+    <h2>Metrics</h2>
     <div class="notes">
       <p>Each answer is graded <b>Correct</b>, <b>Incorrect</b>, or <b>Not attempted</b>. Not attempted means the model does not give an answer, for example it stays silent, only repeats the question, or says it does not know. Only Correct counts toward accuracy.</p>
       <p><b>Text accuracy</b>: Whether the text answer is correct.</p>
@@ -115,7 +118,7 @@ mark { background: var(--bad-soft); color: var(--bad); padding: 0 1px; border-ra
   <section class="panel">
     <h2>Qwen3-Omni vs. Qwen3-Omni-D2</h2>
     <p>All numbers are percentages of the 100 questions per language. "All" pools the 500 items.</p>
-    <div class="table-scroll"><table><thead><tr><th>Metric</th><th>Model</th><th class='n'>English</th><th class='n'>Chinese</th><th class='n'>Korean</th><th class='n'>Japanese</th><th class='n'>French</th><th class='n'>All</th></tr></thead><tbody><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Text accuracy</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n'>82.0</td><td class='n'>75.0</td><td class='n'>42.0</td><td class='n'>40.0</td><td class='n'>63.0</td><td class='n'>60.4</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n'>72.0</td><td class='n'>47.0</td><td class='n'>6.0</td><td class='n'>22.0</td><td class='n'>30.0</td><td class='n'>35.4</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n'>−10.0</td><td class='n'>−28.0</td><td class='n'>−36.0</td><td class='n'>−18.0</td><td class='n'>−33.0</td><td class='n'>−25.0</td></tr><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Speech accuracy</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n'>81.0</td><td class='n'>75.0</td><td class='n'>40.0</td><td class='n'>30.0</td><td class='n'>56.0</td><td class='n'>56.4</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n'>65.0</td><td class='n'>37.0</td><td class='n'>6.0</td><td class='n'>4.0</td><td class='n'>14.0</td><td class='n'>25.2</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n'>−16.0</td><td class='n'>−38.0</td><td class='n'>−34.0</td><td class='n'>−26.0</td><td class='n'>−42.0</td><td class='n'>−31.2</td></tr><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Text meaningful</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n'>100.0</td><td class='n'>100.0</td><td class='n'>92.0</td><td class='n'>95.0</td><td class='n'>93.0</td><td class='n'>96.0</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n'>100.0</td><td class='n'>81.0</td><td class='n'>38.0</td><td class='n'>73.0</td><td class='n'>65.0</td><td class='n'>71.4</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n'>0.0</td><td class='n'>−19.0</td><td class='n'>−54.0</td><td class='n'>−22.0</td><td class='n'>−28.0</td><td class='n'>−24.6</td></tr><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Speech meaningful</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n'>99.0</td><td class='n'>100.0</td><td class='n'>91.0</td><td class='n'>83.0</td><td class='n'>80.0</td><td class='n'>90.6</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n'>93.0</td><td class='n'>65.0</td><td class='n'>33.0</td><td class='n'>17.0</td><td class='n'>22.0</td><td class='n'>46.0</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n'>−6.0</td><td class='n'>−35.0</td><td class='n'>−58.0</td><td class='n'>−66.0</td><td class='n'>−58.0</td><td class='n'>−44.6</td></tr><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Speaks target language</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n'>97.0</td><td class='n'>84.0</td><td class='n'>99.0</td><td class='n'>79.0</td><td class='n'>74.0</td><td class='n'>86.6</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n'>100.0</td><td class='n'>69.0</td><td class='n'>87.0</td><td class='n'>9.0</td><td class='n'>14.0</td><td class='n'>55.8</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n'>+3.0</td><td class='n'>−15.0</td><td class='n'>−12.0</td><td class='n'>−70.0</td><td class='n'>−60.0</td><td class='n'>−30.8</td></tr></tbody></table></div>
+    <div class="table-scroll"><table><thead><tr><th>Metric</th><th>Model</th><th class='n hl'>English</th><th class='n'>Chinese</th><th class='n'>Korean</th><th class='n'>Japanese</th><th class='n'>French</th><th class='n'>All</th></tr></thead><tbody><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Text accuracy</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n hl'>82.0</td><td class='n'>75.0</td><td class='n'>42.0</td><td class='n'>40.0</td><td class='n'>63.0</td><td class='n'>60.4</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n hl'>72.0</td><td class='n'>47.0</td><td class='n'>6.0</td><td class='n'>22.0</td><td class='n'>30.0</td><td class='n'>35.4</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n hl'>−10.0</td><td class='n'>−28.0</td><td class='n'>−36.0</td><td class='n'>−18.0</td><td class='n'>−33.0</td><td class='n'>−25.0</td></tr><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Speech accuracy</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n hl'>81.0</td><td class='n'>75.0</td><td class='n'>40.0</td><td class='n'>30.0</td><td class='n'>56.0</td><td class='n'>56.4</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n hl'>65.0</td><td class='n'>37.0</td><td class='n'>6.0</td><td class='n'>4.0</td><td class='n'>14.0</td><td class='n'>25.2</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n hl'>−16.0</td><td class='n'>−38.0</td><td class='n'>−34.0</td><td class='n'>−26.0</td><td class='n'>−42.0</td><td class='n'>−31.2</td></tr><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Text meaningful</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n hl'>100.0</td><td class='n'>100.0</td><td class='n'>92.0</td><td class='n'>95.0</td><td class='n'>93.0</td><td class='n'>96.0</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n hl'>100.0</td><td class='n'>81.0</td><td class='n'>38.0</td><td class='n'>73.0</td><td class='n'>65.0</td><td class='n'>71.4</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n hl'>0.0</td><td class='n'>−19.0</td><td class='n'>−54.0</td><td class='n'>−22.0</td><td class='n'>−28.0</td><td class='n'>−24.6</td></tr><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Speech meaningful</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n hl'>99.0</td><td class='n'>100.0</td><td class='n'>91.0</td><td class='n'>83.0</td><td class='n'>80.0</td><td class='n'>90.6</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n hl'>93.0</td><td class='n'>65.0</td><td class='n'>33.0</td><td class='n'>17.0</td><td class='n'>22.0</td><td class='n'>46.0</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n hl'>−6.0</td><td class='n'>−35.0</td><td class='n'>−58.0</td><td class='n'>−66.0</td><td class='n'>−58.0</td><td class='n'>−44.6</td></tr><tr class='first'><th scope='rowgroup' rowspan='3' class='metric'>Speaks target language</th><td class='mname m-qwen'>Qwen3-Omni</td><td class='n hl'>97.0</td><td class='n'>84.0</td><td class='n'>99.0</td><td class='n'>79.0</td><td class='n'>74.0</td><td class='n'>86.6</td></tr><tr><td class='mname m-d2'>Qwen3-Omni-D2</td><td class='n hl'>100.0</td><td class='n'>69.0</td><td class='n'>87.0</td><td class='n'>9.0</td><td class='n'>14.0</td><td class='n'>55.8</td></tr><tr class='delta'><td class='mname'>Δ (D2 − Qwen3-Omni)</td><td class='n hl'>+3.0</td><td class='n'>−15.0</td><td class='n'>−12.0</td><td class='n'>−70.0</td><td class='n'>−60.0</td><td class='n'>−30.8</td></tr></tbody></table></div>
   </section>
 
   <nav class="controls" aria-label="Language">

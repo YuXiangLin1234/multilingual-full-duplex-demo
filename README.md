@@ -1,4 +1,4 @@
-# Multilingual Full-Duplex Demo
+# NTU Proposal 2026: Multilingual Full-Duplex Spoken Language Models
 
 CCFQA spoken QA in five languages: Qwen3-Omni vs. Qwen3-Omni-D2.
 
